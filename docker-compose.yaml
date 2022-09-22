@@ -1,0 +1,43 @@
+version: '3.2'
+services:
+  client:
+    build: ./client
+    ports:
+      - '3000:3000'
+    networks:
+      - app-network
+    volumes:
+      - $HOME/Coding/SDI-11/GitProjects/Movie-List/client:/client
+    depends_on:
+      - server
+
+  server:
+    build: ./server
+    ports:
+      - '3001:3001'
+    networks:
+      - app-network
+    environment:
+      DB_CONNECTION_STRING: postgres://postgres:password@db:5432/movie_list
+    volumes:
+      - $HOME/Coding/SDI-11/GitProjects/Movie-List/server:/server
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    container_name: movie-list-scaffold-db
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: movie_list
+    volumes:
+      - $HOME/docker/volumes/postgres-Movie_list/:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
